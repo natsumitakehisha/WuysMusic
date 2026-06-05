@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Wuys Music - Private</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,6 +49,8 @@ html, body {
   background: var(--bg);
   color: var(--white);
   overflow: hidden;
+  position: fixed;
+  width: 100%;
 }
 
 /* ═══════════════════════════════════
@@ -59,6 +61,8 @@ html, body {
   grid-template-columns: var(--sidebar-w) 1fr;
   grid-template-rows: 1fr var(--player-h);
   height: 100vh;
+  width: 100%;
+  position: relative;
 }
 
 /* ═══════════════════════════════════
@@ -257,9 +261,10 @@ html, body {
   overflow-y: auto;
   position: relative;
   background: linear-gradient(180deg, #1a0f35 0%, var(--bg) 38%);
+  -webkit-overflow-scrolling: touch;
 }
 
-#main::-webkit-scrollbar { width: 6px; }
+#main::-webkit-scrollbar { width: 5px; }
 #main::-webkit-scrollbar-track { background: transparent; }
 #main::-webkit-scrollbar-thumb { background: var(--p-border); border-radius: 3px; }
 
@@ -528,7 +533,7 @@ html, body {
 }
 
 /* ═══════════════════════════════════
-   NOW PLAYING BAR (BOTTOM)
+   NOW PLAYING BAR (BOTTOM) - MOBILE FIX
 ═══════════════════════════════════ */
 #player-bar {
   grid-column: 1 / 3;
@@ -542,6 +547,9 @@ html, body {
   gap: 16px;
   position: relative;
   z-index: 100;
+  min-height: var(--player-h);
+  height: auto;
+  flex-wrap: wrap;
 }
 
 /* Progress track at very top of bar */
@@ -562,26 +570,25 @@ html, body {
   align-items: center;
   gap: 13px;
   min-width: 0;
-  flex: 0 0 280px;
+  flex: 1;
+  max-width: 280px;
 }
 
 #album-art {
   width: 52px; height: 52px;
   border-radius: 9px;
-  background: var(--surface3) url('album_default.jpg') center/cover;
+  background: var(--surface3);
   flex-shrink: 0;
   border: 1px solid var(--p-border);
-  animation: spinArt 10s linear infinite paused;
   transition: border-color .3s;
+  background-size: cover;
+  background-position: center;
 }
 
 #album-art.playing {
-  animation-play-state: running;
   border-color: var(--accent);
   box-shadow: 0 0 18px rgba(232,121,249,0.25);
 }
-
-@keyframes spinArt { to { transform: rotate(360deg); } }
 
 .np-text { min-width: 0; flex: 1; }
 
@@ -617,18 +624,20 @@ html, body {
 
 /* CONTROLS CENTER */
 #controls-center {
-  flex: 1;
+  flex: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  max-width: 480px;
+  min-width: 0;
 }
 
 .ctrl-buttons {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .ctrl-btn {
@@ -708,7 +717,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex: 0 0 180px;
+  flex: 0 0 auto;
   justify-content: flex-end;
 }
 
@@ -771,7 +780,6 @@ html, body {
   pointer-events: none;
 }
 
-/* Animated rings */
 .splash-rings {
   position: relative;
   width: 140px; height: 140px;
@@ -857,9 +865,7 @@ html, body {
   pointer-events: none;
 }
 
-/* ═══════════════════════════════════
-   VIDEO BACKGROUND (blur behind sidebar/main)
-═══════════════════════════════════ */
+/* VIDEO BACKGROUND */
 #video-background {
   position: fixed;
   inset: 0;
@@ -870,29 +876,107 @@ html, body {
 }
 
 /* ═══════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE - MOBILE OPTIMIZED
 ═══════════════════════════════════ */
 @media (max-width: 680px) {
-  :root { --sidebar-w: 0px; }
+  :root { --sidebar-w: 0px; --player-h: 96px; }
 
   #sidebar { display: none; }
 
   #app {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr var(--player-h);
+    grid-template-rows: 1fr auto;
+    height: 100vh;
   }
 
   #main { grid-column: 1; }
-  #player-bar { grid-column: 1; }
+  #player-bar { 
+    grid-column: 1;
+    flex-direction: column;
+    padding: 12px 16px;
+    gap: 10px;
+    height: auto;
+    min-height: auto;
+  }
 
   .hero { flex-direction: column; align-items: flex-start; padding: 10px 16px 24px; }
   .hero-art { width: 140px; height: 140px; }
-  .tracks-section { padding: 0 8px 120px; }
+  .tracks-section { padding: 0 8px 100px; }
   .top-bar { padding: 12px 16px; }
 
-  #now-playing { flex: 1; min-width: 0; }
-  #controls-right { display: none; }
-  #controls-center { flex: 0 0 auto; }
+  /* Mobile player layout */
+  #now-playing {
+    max-width: 100%;
+    width: 100%;
+    flex: none;
+  }
+
+  #controls-center {
+    width: 100%;
+    flex: none;
+  }
+
+  .seek-row {
+    width: 100%;
+  }
+
+  #controls-right {
+    display: none;
+  }
+
+  .ctrl-buttons {
+    gap: 12px;
+  }
+
+  .ctrl-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  #play-pause-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .np-like {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+  }
+
+  #album-art {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Small devices */
+@media (max-width: 480px) {
+  #player-bar {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  
+  .ctrl-buttons {
+    gap: 8px;
+  }
+  
+  .ctrl-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+  
+  #play-pause-btn {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .seek-time {
+    width: 28px;
+    font-size: 0.65em;
+  }
 }
 
 /* ═══════════════════════════════════
@@ -976,7 +1060,7 @@ html, body {
       <div class="hero-meta">
         <p class="hero-eyebrow">Personal Playlist</p>
         <h1 class="hero-title">Wuys<br>Radio</h1>
-        <p class="hero-sub"><strong>20 tracks</strong> · Mixed vibes · 2025</p>
+        <p class="hero-sub"><strong>32 tracks</strong> · Mixed vibes · 2025</p>
         <div class="hero-actions">
           <button class="btn-play-hero" id="hero-play-btn" onclick="heroPlay()">▶</button>
           <button class="btn-shuffle" onclick="shufflePlay()">⇌ &nbsp;Shuffle</button>
@@ -1039,7 +1123,7 @@ html, body {
 
 <script>
 /* ═══════════════════════════════════
-   PLAYER LOGIC
+   PLAYER LOGIC (32 tracks)
 ═══════════════════════════════════ */
 const player = {
   audio: null, playPauseBtn: null, loopBtn: null,
@@ -1095,6 +1179,7 @@ const player = {
     this.albumArtEl   = document.getElementById('album-art');
     this.audio.loop   = false;
     this.audio.volume = 1;
+    this.albumArtEl.style.backgroundImage = "url('album_default.jpg')";
 
     this.audio.addEventListener('loadedmetadata', () => {
       const d = this.fmt(this.audio.duration);
@@ -1113,7 +1198,6 @@ const player = {
       document.getElementById('cur-time').textContent = cur;
     };
 
-    this.albumArtEl.style.backgroundImage = "url('album_default.jpg')";
     buildUI();
   },
 
@@ -1121,7 +1205,8 @@ const player = {
     this.isPlaying = v;
     this.playPauseBtn.textContent = v ? '⏸' : '▶';
     this.albumArtEl.classList.toggle('playing', v);
-    document.getElementById('hero-play-btn').textContent = v ? '⏸' : '▶';
+    const heroBtn = document.getElementById('hero-play-btn');
+    if (heroBtn) heroBtn.textContent = v ? '⏸' : '▶';
     updateActiveRow();
   },
 
@@ -1137,20 +1222,22 @@ const player = {
     this.trackNameEl.textContent = '⋯ ' + t.name;
     this.albumArtEl.style.backgroundImage = "url('album_default.jpg')";
     this.audio.onended = null;
-    this.audio.oncanplaythrough = null;
-    this.audio.onerror = null;
-    this.audio.addEventListener('canplaythrough', () => {
+    const canPlayHandler = () => {
       this.isLoading = false;
       this.trackNameEl.textContent = t.name;
-    }, { once: true });
-    this.audio.addEventListener('error', () => {
+      this.audio.removeEventListener('canplaythrough', canPlayHandler);
+    };
+    const errorHandler = () => {
       this.isLoading = false;
       this.trackNameEl.textContent = '✕ ' + t.name;
       setTimeout(() => this.loadTrack(this.currentTrackIndex + 1), 2000);
-    }, { once: true });
+      this.audio.removeEventListener('error', errorHandler);
+    };
+    this.audio.addEventListener('canplaythrough', canPlayHandler, { once: true });
+    this.audio.addEventListener('error', errorHandler, { once: true });
     this.audio.onended = () => { if (!this.audio.loop) this.nextTrack(); };
     this.audio.play()
-      .then(() => { this.isLoading = false; this.setPlay(true); })
+      .then(() => { this.setPlay(true); })
       .catch(() => { this.isLoading = false; this.setPlay(false); this.trackNameEl.textContent = t.name; });
     updateActiveRow();
   },
@@ -1185,9 +1272,7 @@ const player = {
   }
 };
 
-/* ═══════════════════════════════════
-   UI BUILDING
-═══════════════════════════════════ */
+/* UI BUILDING */
 function buildUI() {
   const list = document.getElementById('track-list');
   const sideList = document.getElementById('sidebar-playlist');
@@ -1195,7 +1280,6 @@ function buildUI() {
   sideList.innerHTML = '';
 
   player.tracks.forEach((t, i) => {
-    // Main track row
     const row = document.createElement('div');
     row.className = 'track-row';
     row.id = `row-${i}`;
@@ -1204,14 +1288,13 @@ function buildUI() {
       <div class="tr-num">${i + 1}</div>
       <div class="tr-play-icon">▶</div>
       <div class="tr-info">
-        <div class="tr-name">${t.name}</div>
-        <div class="tr-artist">${t.artist}</div>
+        <div class="tr-name">${escapeHtml(t.name)}</div>
+        <div class="tr-artist">${escapeHtml(t.artist)}</div>
       </div>
       <div class="tr-dur" id="dur-${i}">—</div>
     `;
     list.appendChild(row);
 
-    // Sidebar item
     const sItem = document.createElement('div');
     sItem.className = 'playlist-item';
     sItem.id = `sitem-${i}`;
@@ -1222,10 +1305,19 @@ function buildUI() {
         <span></span><span></span><span></span>
       </div>
       <div class="pl-info">
-        <div class="pl-name">${t.name}</div>
+        <div class="pl-name">${escapeHtml(t.name)}</div>
       </div>
     `;
     sideList.appendChild(sItem);
+  });
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
   });
 }
 
@@ -1257,9 +1349,7 @@ function shufflePlay() {
   player.loadRandomTrack();
 }
 
-/* ═══════════════════════════════════
-   SPLASH
-═══════════════════════════════════ */
+/* SPLASH */
 let videoReady = false;
 setTimeout(() => {
   videoReady = true;
